@@ -83,14 +83,14 @@ export function ForecastWidget() {
   const q = useWeather();
   return (
     <Card title="7-Day Forecast">
-      {!now || q.isPending ? <div className="flex gap-3 overflow-x-auto">{Array.from({ length: 7 }, (_, i) => <Skel key={i} className="h-28 w-20 shrink-0" />)}</div>
+      {!now || q.isPending ? <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">{Array.from({ length: 7 }, (_, i) => <Skel key={i} className="h-28 min-w-0" />)}</div>
         : q.isError ? <Err msg="Couldn't load forecast." retry={() => q.refetch()} /> : (
-          <div className="flex gap-3 overflow-x-auto pb-1">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
             {q.data.daily.time.map((t, i) => {
               const { Icon, label } = weatherInfo(q.data.daily.weather_code[i] ?? 0);
               const d = new Date(t + "T12:00");
               return (
-                <div key={t} title={label} className="flex min-w-20 flex-1 flex-col items-center gap-2 rounded-xl border border-border bg-muted/40 p-3">
+                <div key={t} title={label} className="flex min-w-0 flex-col items-center gap-2 rounded-lg border border-border bg-muted/40 px-2 py-3">
                   <span className="text-xs text-muted-foreground">{i === 0 ? "Today" : d.toLocaleDateString(undefined, { weekday: "short" })}</span>
                   <Icon className="h-7 w-7 text-primary" strokeWidth={1.5} />
                   <span className="text-sm font-semibold">{Math.round(q.data.daily.temperature_2m_max[i] ?? 0)}°</span>

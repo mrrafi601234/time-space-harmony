@@ -24,7 +24,6 @@ function Dashboard() {
   return (
     <>
       <PageTitle title="Welcome back, Muhi" sub="Here's your room at a glance." />
-      <QuickLinks />
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {w.clock && <ClockWidget />}
         {w.weather && <WeatherWidget />}
@@ -33,6 +32,7 @@ function Dashboard() {
         {w.classes !== false && <ClassScheduleWidget />}
         {w.tasks && <div className="md:col-span-2"><TodayTasksWidget /></div>}
       </div>
+      <QuickLinks />
     </>
   );
 }
