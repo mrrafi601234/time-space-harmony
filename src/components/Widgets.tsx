@@ -3,7 +3,7 @@ import { Droplets, Moon, Wind } from "lucide-react";
 import type { ReactNode } from "react";
 import { useClock } from "@/hooks/useClock";
 import { useSettings, useTasks, ymd } from "@/lib/store";
-import { fetchPrayerTimes, PRAYERS, to12h, toDate } from "@/services/prayerService";
+import { fetchPrayerTimes, type PrayerName, PRAYERS, to12h, toDate } from "@/services/prayerService";
 import { fetchWeather, weatherInfo } from "@/services/weatherService";
 
 export function Card({ title, icon, children, className = "" }: { title?: string; icon?: ReactNode; children: ReactNode; className?: string }) {
@@ -85,14 +85,14 @@ export function ForecastWidget() {
         : q.isError ? <Err msg="Couldn't load forecast." retry={() => q.refetch()} /> : (
           <div className="flex gap-3 overflow-x-auto pb-1">
             {q.data.daily.time.map((t, i) => {
-              const { Icon, label } = weatherInfo(q.data.daily.weather_code[i]);
+              const { Icon, label } = weatherInfo(q.data.daily.weather_code[i] ?? 0);
               const d = new Date(t + "T12:00");
               return (
                 <div key={t} title={label} className="flex min-w-20 flex-1 flex-col items-center gap-2 rounded-xl border border-border bg-muted/40 p-3">
                   <span className="text-xs text-muted-foreground">{i === 0 ? "Today" : d.toLocaleDateString(undefined, { weekday: "short" })}</span>
                   <Icon className="h-7 w-7 text-primary" strokeWidth={1.5} />
-                  <span className="text-sm font-semibold">{Math.round(q.data.daily.temperature_2m_max[i])}°</span>
-                  <span className="text-xs text-muted-foreground">{Math.round(q.data.daily.temperature_2m_min[i])}°</span>
+                  <span className="text-sm font-semibold">{Math.round(q.data.daily.temperature_2m_max[i] ?? 0)}°</span>
+                  <span className="text-xs text-muted-foreground">{Math.round(q.data.daily.temperature_2m_min[i] ?? 0)}°</span>
                 </div>
               );
             })}
@@ -106,7 +106,7 @@ export function PrayerWidget() {
   const [s] = useSettings();
   const now = useClock();
   const q = useQuery({ queryKey: ["prayer", s.lat, s.lon, s.method, now ? ymd(now) : ""], queryFn: () => fetchPrayerTimes(s.lat, s.lon, s.method), enabled: !!now, staleTime: 3600000 });
-  let current: string | null = null, next: string = PRAYERS[0], diff = 0;
+  let current: PrayerName | null = null, next: PrayerName = PRAYERS[0], diff = 0;
   if (q.data && now) {
     for (const p of PRAYERS) if (toDate(q.data[p], now) <= now) current = p;
     const up = PRAYERS.find((p) => toDate(q.data[p], now) > now);

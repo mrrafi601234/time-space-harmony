@@ -27,12 +27,12 @@ export async function fetchPrayerTimes(lat: number, lon: number, method: number)
 }
 
 export const toDate = (hhmm: string, base = new Date()) => {
-  const [h, m] = hhmm.split(":").map(Number);
+  const [h = 0, m = 0] = hhmm.split(":").map(Number);
   const d = new Date(base); d.setHours(h, m, 0, 0);
   return d;
 };
 
 export function to12h(hhmm: string) {
-  const [h, m] = hhmm.split(":").map(Number);
+  const [h = 0, m = 0] = hhmm.split(":").map(Number);
   return `${((h + 11) % 12) + 1}:${String(m).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
 }

@@ -47,7 +47,7 @@ export const uid = () => Math.random().toString(36).slice(2, 10);
 export const ymd = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 export const daysUntil = (date: string) => {
-  const [y, m, d] = date.split("-").map(Number);
+  const [y = 0, m = 1, d = 1] = date.split("-").map(Number);
   const t = new Date(y, m - 1, d).getTime();
   const n = new Date(); n.setHours(0, 0, 0, 0);
   return Math.round((t - n.getTime()) / 86400000);
