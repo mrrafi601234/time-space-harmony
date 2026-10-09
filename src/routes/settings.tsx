@@ -9,6 +9,7 @@ import { notifyStorageChange, STORAGE_PREFIX } from "@/hooks/useLocalStorage";
 import { useSettings, type WidgetKey } from "@/lib/store";
 import { METHODS } from "@/services/prayerService";
 import { type GeoResult, searchCity } from "@/services/weatherService";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -17,6 +18,8 @@ export const Route = createFileRoute("/settings")({
       { name: "description", content: "Location, units, prayer method, widgets and data backup." },
       { property: "og:title", content: "Settings — Muhi's Room" },
       { property: "og:description", content: "Location, units, prayer method, widgets and data backup." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SettingsPage,
@@ -47,8 +50,10 @@ function SettingsPage() {
   const exportData = () => {
     const data: Record<string, unknown> = {};
     for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i)!;
-      if (k.startsWith(STORAGE_PREFIX)) data[k.slice(STORAGE_PREFIX.length)] = JSON.parse(localStorage.getItem(k)!);
+      const k = localStorage.key(i);
+      if (!k || !k.startsWith(STORAGE_PREFIX)) continue;
+      const value = localStorage.getItem(k);
+      if (value) data[k.slice(STORAGE_PREFIX.length)] = JSON.parse(value);
     }
     const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
     const a = document.createElement("a"); a.href = url; a.download = `muhi-room-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click();
@@ -126,7 +131,14 @@ function SettingsPage() {
               </li>
             ))}
           </ul>
-          <label className="mt-3 flex items-center justify-between border-t border-border px-1 pt-3 text-sm">Animated ambient background
+          <div className="mt-4 border-t border-border pt-4">
+            <p className="mb-3 text-sm">Background style</p>
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Background style">
+              <Button variant={s.backgroundMode !== "particles" ? "default" : "outline"} aria-pressed={s.backgroundMode !== "particles"} onClick={() => setS({ ...s, backgroundMode: "images" })}>Dynamic images</Button>
+              <Button variant={s.backgroundMode === "particles" ? "default" : "outline"} aria-pressed={s.backgroundMode === "particles"} onClick={() => setS({ ...s, backgroundMode: "particles" })}>Canvas particles</Button>
+            </div>
+          </div>
+          <label className="mt-3 flex items-center justify-between px-1 pt-3 text-sm">Ambient background
             <input type="checkbox" className="h-4 w-4 accent-[var(--primary)]" checked={s.ambient !== false} onChange={(e) => setS({ ...s, ambient: e.target.checked })} />
           </label>
         </Card>

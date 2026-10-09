@@ -3,6 +3,7 @@ import { PageTitle } from "@/components/Header";
 import { ClockWidget, ForecastWidget, PrayerWidget, TodayTasksWidget, WeatherWidget } from "@/components/Widgets";
 import { ClassScheduleWidget } from "@/components/Classes";
 import { useSettings } from "@/lib/store";
+import { QuickLinks } from "@/components/QuickLinks";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -11,6 +12,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Clock, weather, forecast, prayer times and today's tasks at a glance." },
       { property: "og:title", content: "Dashboard — Muhi's Room" },
       { property: "og:description", content: "Clock, weather, forecast, prayer times and today's tasks at a glance." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
@@ -21,11 +24,12 @@ function Dashboard() {
   return (
     <>
       <PageTitle title="Welcome back, Muhi" sub="Here's your room at a glance." />
+      <QuickLinks />
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {w.clock && <ClockWidget />}
         {w.weather && <WeatherWidget />}
         {w.prayer && <div className="md:row-span-2"><PrayerWidget /></div>}
-        {w.forecast && <div className="md:col-span-2"><ForecastWidget /></div>}
+        {w.forecast && <div className="min-w-0 md:col-span-2"><ForecastWidget /></div>}
         {w.classes !== false && <ClassScheduleWidget />}
         {w.tasks && <div className="md:col-span-2"><TodayTasksWidget /></div>}
       </div>

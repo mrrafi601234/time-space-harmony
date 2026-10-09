@@ -8,7 +8,7 @@ import { fetchWeather, weatherInfo } from "@/services/weatherService";
 
 export function Card({ title, icon, children, className = "" }: { title?: string; icon?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={`glass p-5 ${className}`}>
+    <section className={`glass min-w-0 p-5 ${className}`}>
       {title && (
         <h2 className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           {icon} {title}
@@ -48,11 +48,12 @@ function useWeather() {
 }
 
 export function WeatherWidget() {
+  const now = useClock();
   const [s, setS] = useSettings();
   const q = useWeather();
   return (
     <Card title="Weather">
-      {q.isPending ? (
+      {!now || q.isPending ? (
         <div className="space-y-3"><Skel className="h-14 w-32" /><Skel className="h-4 w-48" /></div>
       ) : q.isError ? <Err msg="Couldn't load weather." retry={() => q.refetch()} /> : (() => {
         const c = q.data.current; const { label, Icon } = weatherInfo(c.weather_code);
@@ -78,10 +79,11 @@ export function WeatherWidget() {
 }
 
 export function ForecastWidget() {
+  const now = useClock();
   const q = useWeather();
   return (
     <Card title="7-Day Forecast">
-      {q.isPending ? <div className="flex gap-3">{Array.from({ length: 7 }, (_, i) => <Skel key={i} className="h-28 w-20 shrink-0" />)}</div>
+      {!now || q.isPending ? <div className="flex gap-3 overflow-x-auto">{Array.from({ length: 7 }, (_, i) => <Skel key={i} className="h-28 w-20 shrink-0" />)}</div>
         : q.isError ? <Err msg="Couldn't load forecast." retry={() => q.refetch()} /> : (
           <div className="flex gap-3 overflow-x-auto pb-1">
             {q.data.daily.time.map((t, i) => {

@@ -14,6 +14,8 @@ export const Route = createFileRoute("/alarms")({
       { name: "description", content: "Recurring and one-off alarms with custom sounds." },
       { property: "og:title", content: "Alarms — Muhi's Room" },
       { property: "og:description", content: "Recurring and one-off alarms with custom sounds." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AlarmsPage,

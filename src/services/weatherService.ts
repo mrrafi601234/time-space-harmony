@@ -1,15 +1,16 @@
 import { Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSnow, CloudSun, Sun, type LucideIcon } from "lucide-react";
 
 export interface WeatherData {
+  utc_offset_seconds?: number;
   current: { temperature_2m: number; relative_humidity_2m: number; wind_speed_10m: number; weather_code: number };
-  daily: { time: string[]; weather_code: number[]; temperature_2m_max: number[]; temperature_2m_min: number[] };
+  daily: { time: string[]; weather_code: number[]; temperature_2m_max: number[]; temperature_2m_min: number[]; sunrise?: string[]; sunset?: string[] };
 }
 
 export async function fetchWeather(lat: number, lon: number, unit: "C" | "F"): Promise<WeatherData> {
   const p = new URLSearchParams({
     latitude: String(lat), longitude: String(lon),
     current: "temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code",
-    daily: "weather_code,temperature_2m_max,temperature_2m_min",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset",
     temperature_unit: unit === "F" ? "fahrenheit" : "celsius",
     wind_speed_unit: unit === "F" ? "mph" : "kmh",
     timezone: "auto", forecast_days: "7",

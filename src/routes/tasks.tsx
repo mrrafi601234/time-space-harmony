@@ -13,6 +13,8 @@ export const Route = createFileRoute("/tasks")({
       { name: "description", content: "To-dos, quick notes, Pomodoro timer and weekly habit tracker." },
       { property: "og:title", content: "Tasks & Focus — Muhi's Room" },
       { property: "og:description", content: "To-dos, quick notes, Pomodoro timer and weekly habit tracker." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: TasksPage,

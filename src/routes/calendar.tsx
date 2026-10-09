@@ -13,6 +13,8 @@ export const Route = createFileRoute("/calendar")({
       { name: "description", content: "Monthly calendar for events, exams, classes, deadlines and countdowns." },
       { property: "og:title", content: "Calendar — Muhi's Room" },
       { property: "og:description", content: "Monthly calendar for events, exams, classes, deadlines and countdowns." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: CalendarPage,
