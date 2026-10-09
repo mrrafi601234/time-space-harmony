@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AlarmWatcher } from "@/components/AlarmWatcher";
+import { PrayerAlarmWatcher } from "@/components/PrayerAlarmWatcher";
 import { Header } from "@/components/Header";
 import { BottomNav, Sidebar } from "@/components/Nav";
 
@@ -135,6 +136,7 @@ function RootComponent() {
       </div>
       <BottomNav />
       <AlarmWatcher />
+      <PrayerAlarmWatcher />
     </QueryClientProvider>
   );
 }
