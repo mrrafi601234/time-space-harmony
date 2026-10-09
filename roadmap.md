@@ -5,6 +5,6 @@
 - [x] Verify rules, saved-link interactions and layout.
 
 # Premium glass finish
-- [ ] Add a textured central glass sheet, top navigation and glossy controls.
-- [ ] Move favorites into a separate lower-center glass panel with three shortcuts.
-- [ ] Verify dashboard rendering and existing interactions.
+- [x] Add a textured central glass sheet, top navigation and glossy controls.
+- [x] Move favorites into a separate lower-center glass panel with three shortcuts.
+- [x] Verify dashboard rendering and existing interactions.
