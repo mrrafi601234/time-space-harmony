@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { PageTitle } from "@/components/Header";
 import { Card } from "@/components/Widgets";
 import { playSound } from "@/lib/audio";
-import { type Category, type Priority, uid, useHabits, useNotes, useTasks, ymd } from "@/lib/store";
+import { type Category, type Priority, uid, streak, useHabits, useNotes, usePomoLog, useTasks, ymd } from "@/lib/store";
 
 export const Route = createFileRoute("/tasks")({
   head: () => ({
@@ -55,7 +55,7 @@ function TodoList() {
       <ul className="space-y-2">
         {shown.length === 0 && <p className="text-sm text-muted-foreground">Nothing here.</p>}
         {shown.map((t) => (
-          <li key={t.id} className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-3 py-2.5">
+          <li key={t.id} className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 transition ${t.done ? "border-success/40 bg-success/10 shadow-glow-success" : "border-border bg-muted/40"}`}>
             <input type="checkbox" checked={t.done} onChange={() => setTasks((p) => p.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)))} className="h-4 w-4 accent-[var(--primary)]" />
             <div className="min-w-0 flex-1">
               <p className={`truncate text-sm ${t.done ? "text-muted-foreground line-through" : ""}`}>{t.title}</p>
@@ -77,7 +77,9 @@ function Pomodoro() {
   const [mode, setMode] = useState<Mode>("Work");
   const [left, setLeft] = useState(MODES.Work * 60);
   const [running, setRunning] = useState(false);
-  const [sessions, setSessions] = useState(0);
+  const [log, setLog] = usePomoLog();
+  const sessions = log[ymd(new Date())] ?? 0;
+  const pStreak = streak(Object.keys(log).filter((k) => (log[k] ?? 0) > 0));
   useEffect(() => {
     if (!running) return;
     const id = setInterval(() => setLeft((l) => l - 1), 1000);
@@ -87,9 +89,9 @@ function Pomodoro() {
     if (left > 0) return;
     playSound("bell");
     setRunning(false);
-    if (mode === "Work") setSessions((s) => s + 1);
+    if (mode === "Work") setLog((p) => { const k = ymd(new Date()); return { ...p, [k]: (p[k] ?? 0) + 1 }; });
     setLeft(MODES[mode] * 60);
-  }, [left, mode]);
+  }, [left, mode, setLog]);
   const pick = (m: Mode) => { setMode(m); setRunning(false); setLeft(MODES[m] * 60); };
   const pct = 1 - left / (MODES[mode] * 60);
   return (
@@ -110,7 +112,7 @@ function Pomodoro() {
         <button className="btn btn-primary" onClick={() => setRunning((r) => !r)}>{running ? <><Pause className="h-4 w-4" />Pause</> : <><Play className="h-4 w-4" />Start</>}</button>
         <button className="btn btn-ghost" onClick={() => pick(mode)}><RotateCcw className="h-4 w-4" />Reset</button>
       </div>
-      <p className="mt-3 text-center text-sm text-muted-foreground">Sessions completed: <span className="font-semibold text-foreground">{sessions}</span></p>
+      <p className="mt-3 text-center text-sm text-muted-foreground">Today: <span className="font-semibold text-foreground">{sessions}</span> · 🔥 Streak: <span className="font-semibold text-warning">{pStreak} day{pStreak === 1 ? "" : "s"}</span></p>
     </Card>
   );
 }
@@ -155,10 +157,10 @@ function Habits() {
           <tbody>
             {habits.map((h) => (
               <tr key={h.id}>
-                <td className="max-w-24 truncate py-1 pr-2">{h.name}</td>
+                <td className="max-w-28 truncate py-1 pr-2">{h.name} <span className="text-xs text-warning">🔥{streak(h.checks)}</span></td>
                 {week.map((d) => { const k = ymd(d); const on = h.checks.includes(k); return (
                   <td key={k} className="p-0.5 text-center">
-                    <button onClick={() => toggle(h.id, k)} className={`h-7 w-7 rounded-lg border transition ${on ? "border-success bg-success/80" : "border-border bg-muted/40 hover:border-primary"}`} aria-label={`${h.name} ${k}`} />
+                    <button onClick={() => toggle(h.id, k)} className={`h-7 w-7 rounded-lg border transition ${on ? "check-pop border-success bg-success/80 shadow-glow-success" : "border-border bg-muted/40 hover:border-primary"}`} aria-label={`${h.name} ${k}`} />
                   </td>); })}
                 <td><button onClick={() => setHabits((p) => p.filter((x) => x.id !== h.id))} className="pl-1 text-muted-foreground hover:text-destructive" aria-label="Delete habit"><Trash2 className="h-3.5 w-3.5" /></button></td>
               </tr>

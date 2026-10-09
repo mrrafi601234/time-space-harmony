@@ -3,7 +3,7 @@ import { Droplets, Moon, Wind } from "lucide-react";
 import type { ReactNode } from "react";
 import { useClock } from "@/hooks/useClock";
 import { useSettings, useTasks, ymd } from "@/lib/store";
-import { fetchPrayerTimes, getPrayerWindow, type PrayerName, PRAYERS, to12h, toDate } from "@/services/prayerService";
+import { fetchPrayerTimes, getPrayerGap, getPrayerWindow, type PrayerName, PRAYERS, to12h, toDate } from "@/services/prayerService";
 import { fetchWeather, weatherInfo } from "@/services/weatherService";
 
 export function Card({ title, icon, children, className = "" }: { title?: string; icon?: ReactNode; children: ReactNode; className?: string }) {
@@ -118,6 +118,7 @@ export function PrayerWidget() {
   const fmt = (n: number) => String(n).padStart(2, "0");
   const win = q.data && now ? getPrayerWindow(q.data, now) : null;
   if (q.data && now) current = win?.name ?? null;
+  const gap = q.data && now ? getPrayerGap(q.data, now) : null;
   const rem = win ? `${Math.floor(win.remaining / 3600)}h ${Math.floor((win.remaining % 3600) / 60)}m` : "";
   return (
     <Card title="Prayer Times" icon={<Moon className="h-3.5 w-3.5" />}>
@@ -140,11 +141,16 @@ export function PrayerWidget() {
               {win ? (
                 <>
                   <div className="h-2 overflow-hidden rounded-full bg-muted">
-                    <div className="h-full bg-gradient-accent transition-all duration-1000 ease-linear" style={{ width: `${win.pct}%` }} />
+                    <div className="h-full bg-gradient-accent shadow-glow transition-all duration-1000 ease-linear" style={{ width: `${win.pct}%` }} />
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">{Math.floor(win.pct)}% elapsed • {rem} remaining until {win.endLabel}</p>
                 </>
-              ) : <p className="text-xs text-muted-foreground">No active prayer window (after Sunrise) — Dhuhr is next.</p>}
+              ) : gap && (
+                <div className={`rounded-xl border p-3 ${gap.kind === "qiyam" ? "border-violet/40 bg-violet/10 shadow-glow-violet" : "border-warning/40 bg-warning/10"}`}>
+                  <p className={`text-sm font-semibold ${gap.kind === "qiyam" ? "text-violet" : "text-warning"}`}>{gap.label}</p>
+                  <p className="text-xs text-muted-foreground">{gap.next} in <span className="font-mono">{fmt(Math.floor(gap.remaining / 3600))}:{fmt(Math.floor((gap.remaining % 3600) / 60))}:{fmt(gap.remaining % 60)}</span></p>
+                </div>
+              )}
             </div>
           </>
         )}
@@ -162,8 +168,8 @@ export function TodayTasksWidget() {
       {list.length === 0 ? <p className="text-sm text-muted-foreground">No high-priority tasks. Enjoy the calm.</p> : (
         <ul className="space-y-2">
           {list.map((t) => (
-            <li key={t.id} className="flex items-center gap-3">
-              <input type="checkbox" checked={t.done} onChange={() => setTasks((p) => p.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)))} className="h-4 w-4 accent-[var(--primary)]" />
+            <li key={t.id} className={`flex items-center gap-3 rounded-lg px-2 py-1 transition ${t.done ? "bg-success/10 shadow-glow-success" : ""}`}>
+              <input type="checkbox" checked={t.done} onChange={() => setTasks((p) => p.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)))} className={`h-4 w-4 accent-[var(--success)] ${t.done ? "check-pop" : ""}`} />
               <span className={`flex-1 truncate text-sm ${t.done ? "text-muted-foreground line-through" : ""}`}>{t.title}</span>
               <span className="text-xs text-muted-foreground">{t.category}</span>
             </li>
