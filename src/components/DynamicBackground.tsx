@@ -14,7 +14,7 @@ import storm from "@/assets/background-storm.jpg";
 
 const photos = { day, night, sunrise, sunset, rain, snow, fog, clouds, storm };
 
-export function DynamicBackground({ weather }: { weather?: WeatherData }) {
+export function DynamicBackground({ weather }: { weather: WeatherData | undefined }) {
   const now = useClock();
   const local = now && weather?.utc_offset_seconds !== undefined ? new Date(now.getTime() + weather.utc_offset_seconds * 1000) : null;
   const minute = local ? local.getUTCHours() * 60 + local.getUTCMinutes() : now ? now.getHours() * 60 + now.getMinutes() : 720;

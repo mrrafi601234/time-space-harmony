@@ -18,6 +18,8 @@ export const Route = createFileRoute("/settings")({
       { name: "description", content: "Location, units, prayer method, widgets and data backup." },
       { property: "og:title", content: "Settings — Muhi's Room" },
       { property: "og:description", content: "Location, units, prayer method, widgets and data backup." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SettingsPage,
