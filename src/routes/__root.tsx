@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AlarmWatcher } from "@/components/AlarmWatcher";
 import { PrayerAlarmWatcher } from "@/components/PrayerAlarmWatcher";
+import { AmbientBackground, TaskCelebration } from "@/components/Ambient";
 import { Header } from "@/components/Header";
 import { BottomNav, Sidebar } from "@/components/Nav";
 
@@ -84,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "Muhi's Room Dashboard" },
       { name: "description", content: "Personal room dashboard: clock, weather, prayer times, tasks, calendar and alarms." },
-      { name: "theme-color", content: "#0b0f19" },
+      { name: "theme-color", content: "#080c14" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { property: "og:title", content: "Muhi's Room Dashboard" },
       { property: "og:description", content: "Personal room dashboard: clock, weather, prayer times, tasks, calendar and alarms." },
@@ -125,8 +126,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AmbientBackground />
       <Sidebar />
-      <div className="min-h-screen px-3 pb-24 sm:px-6 lg:ml-64 lg:pb-8">
+      <div className="relative z-10 min-h-screen px-3 pb-24 sm:px-6 lg:ml-64 lg:pb-8">
         <div className="mx-auto max-w-7xl">
           <Header />
           <main>
@@ -137,6 +139,7 @@ function RootComponent() {
       <BottomNav />
       <AlarmWatcher />
       <PrayerAlarmWatcher />
+      <TaskCelebration />
     </QueryClientProvider>
   );
 }

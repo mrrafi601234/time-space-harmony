@@ -26,7 +26,7 @@ export function Sidebar() {
             to={to}
             activeOptions={{ exact: true }}
             className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition hover:bg-sidebar-accent hover:text-foreground"
-            activeProps={{ className: "bg-sidebar-accent !text-foreground shadow-glow" }}
+            activeProps={{ className: "bg-sidebar-accent !text-foreground shadow-glow ring-1 ring-primary/40" }}
           >
             <Icon className="h-4 w-4" /> {label}
           </Link>
@@ -46,7 +46,7 @@ export function BottomNav() {
           to={to}
           activeOptions={{ exact: true }}
           className="flex flex-col items-center gap-1 py-2.5 text-[11px] text-muted-foreground"
-          activeProps={{ className: "!text-primary" }}
+          activeProps={{ className: "!text-primary drop-shadow-[0_0_8px_var(--primary)]" }}
         >
           <Icon className="h-5 w-5" /> {label}
         </Link>

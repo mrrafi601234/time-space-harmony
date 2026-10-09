@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageTitle } from "@/components/Header";
 import { ClockWidget, ForecastWidget, PrayerWidget, TodayTasksWidget, WeatherWidget } from "@/components/Widgets";
+import { ClassScheduleWidget } from "@/components/Classes";
 import { useSettings } from "@/lib/store";
 
 export const Route = createFileRoute("/")({
@@ -25,7 +26,8 @@ function Dashboard() {
         {w.weather && <WeatherWidget />}
         {w.prayer && <div className="md:row-span-2"><PrayerWidget /></div>}
         {w.forecast && <div className="md:col-span-2"><ForecastWidget /></div>}
-        {w.tasks && <div className="md:col-span-2 xl:col-span-3"><TodayTasksWidget /></div>}
+        {w.classes !== false && <ClassScheduleWidget />}
+        {w.tasks && <div className="md:col-span-2"><TodayTasksWidget /></div>}
       </div>
     </>
   );

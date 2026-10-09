@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { playFor } from "@/lib/audio";
 import { PageTitle } from "@/components/Header";
 import { Card } from "@/components/Widgets";
+import { ClassManager } from "@/components/Classes";
 import { notifyStorageChange, STORAGE_PREFIX } from "@/hooks/useLocalStorage";
 import { useSettings, type WidgetKey } from "@/lib/store";
 import { METHODS } from "@/services/prayerService";
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/settings")({
 
 const WIDGETS: { key: WidgetKey; label: string }[] = [
   { key: "clock", label: "Clock & Date" }, { key: "weather", label: "Current Weather" },
-  { key: "forecast", label: "7-Day Forecast" }, { key: "prayer", label: "Prayer Times" }, { key: "tasks", label: "Today's Tasks" },
+  { key: "forecast", label: "7-Day Forecast" }, { key: "prayer", label: "Prayer Times" }, { key: "tasks", label: "Today's Tasks" }, { key: "classes", label: "Class Schedule" },
 ];
 
 function SettingsPage() {
@@ -120,12 +121,16 @@ function SettingsPage() {
               <li key={w.key}>
                 <label className="flex cursor-pointer items-center justify-between rounded-lg px-1 py-1.5 text-sm">
                   {w.label}
-                  <input type="checkbox" className="h-4 w-4 accent-[var(--primary)]" checked={s.widgets[w.key]} onChange={(e) => setS({ ...s, widgets: { ...s.widgets, [w.key]: e.target.checked } })} />
+                  <input type="checkbox" className="h-4 w-4 accent-[var(--primary)]" checked={s.widgets[w.key] !== false} onChange={(e) => setS({ ...s, widgets: { ...s.widgets, [w.key]: e.target.checked } })} />
                 </label>
               </li>
             ))}
           </ul>
+          <label className="mt-3 flex items-center justify-between border-t border-border px-1 pt-3 text-sm">Animated ambient background
+            <input type="checkbox" className="h-4 w-4 accent-[var(--primary)]" checked={s.ambient !== false} onChange={(e) => setS({ ...s, ambient: e.target.checked })} />
+          </label>
         </Card>
+        <ClassManager />
         <Card title="Data">
           <div className="flex flex-wrap gap-2">
             <button className="btn btn-ghost" onClick={exportData}><Download className="h-4 w-4" />Export JSON</button>
