@@ -1,24 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PageTitle } from "@/components/Header";
+import { ClockWidget, ForecastWidget, PrayerWidget, TodayTasksWidget, WeatherWidget } from "@/components/Widgets";
+import { useSettings } from "@/lib/store";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Dashboard — Muhi's Room" },
+      { name: "description", content: "Clock, weather, forecast, prayer times and today's tasks at a glance." },
+      { property: "og:title", content: "Dashboard — Muhi's Room" },
+      { property: "og:description", content: "Clock, weather, forecast, prayer times and today's tasks at a glance." },
+    ],
+  }),
+  component: Dashboard,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Dashboard() {
+  const [{ widgets: w }] = useSettings();
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <>
+      <PageTitle title="Welcome back, Muhi" sub="Here's your room at a glance." />
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {w.clock && <ClockWidget />}
+        {w.weather && <WeatherWidget />}
+        {w.prayer && <div className="md:row-span-2"><PrayerWidget /></div>}
+        {w.forecast && <div className="md:col-span-2"><ForecastWidget /></div>}
+        {w.tasks && <div className="md:col-span-2 xl:col-span-3"><TodayTasksWidget /></div>}
+      </div>
+    </>
   );
 }
