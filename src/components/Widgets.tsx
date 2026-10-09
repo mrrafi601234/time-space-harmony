@@ -146,7 +146,7 @@ export function TodayTasksWidget() {
   const list = tasks.filter((t) => t.priority === "High" || (t.due && t.due <= today)).slice(0, 6);
   return (
     <Card title="Today's Focus">
-      {list.length === 0 ? <p className="text-sm text-muted-foreground">No high-priority tasks. Enjoy the calm ✨</p> : (
+      {list.length === 0 ? <p className="text-sm text-muted-foreground">No high-priority tasks. Enjoy the calm.</p> : (
         <ul className="space-y-2">
           {list.map((t) => (
             <li key={t.id} className="flex items-center gap-3">
