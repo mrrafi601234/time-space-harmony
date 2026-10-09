@@ -3,7 +3,7 @@ import { Droplets, Moon, Wind } from "lucide-react";
 import type { ReactNode } from "react";
 import { useClock } from "@/hooks/useClock";
 import { useSettings, useTasks, ymd } from "@/lib/store";
-import { fetchPrayerTimes, type PrayerName, PRAYERS, to12h, toDate } from "@/services/prayerService";
+import { fetchPrayerTimes, getPrayerWindow, type PrayerName, PRAYERS, to12h, toDate } from "@/services/prayerService";
 import { fetchWeather, weatherInfo } from "@/services/weatherService";
 
 export function Card({ title, icon, children, className = "" }: { title?: string; icon?: ReactNode; children: ReactNode; className?: string }) {
@@ -116,6 +116,9 @@ export function PrayerWidget() {
     diff = Math.max(0, Math.floor((nd.getTime() - now.getTime()) / 1000));
   }
   const fmt = (n: number) => String(n).padStart(2, "0");
+  const win = q.data && now ? getPrayerWindow(q.data, now) : null;
+  if (q.data && now) current = win?.name ?? null;
+  const rem = win ? `${Math.floor(win.remaining / 3600)}h ${Math.floor((win.remaining % 3600) / 60)}m` : "";
   return (
     <Card title="Prayer Times" icon={<Moon className="h-3.5 w-3.5" />}>
       {q.isPending ? <div className="space-y-2">{PRAYERS.map((p) => <Skel key={p} className="h-9" />)}</div>
@@ -133,6 +136,16 @@ export function PrayerWidget() {
                 </li>
               ))}
             </ul>
+            <div className="mt-4">
+              {win ? (
+                <>
+                  <div className="h-2 overflow-hidden rounded-full bg-muted">
+                    <div className="h-full bg-gradient-accent transition-all duration-1000 ease-linear" style={{ width: `${win.pct}%` }} />
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">{Math.floor(win.pct)}% elapsed • {rem} remaining until {win.endLabel}</p>
+                </>
+              ) : <p className="text-xs text-muted-foreground">No active prayer window (after Sunrise) — Dhuhr is next.</p>}
+            </div>
           </>
         )}
     </Card>

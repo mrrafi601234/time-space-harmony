@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Download, Search, Trash2, Upload } from "lucide-react";
 import { useRef, useState } from "react";
+import { playFor } from "@/lib/audio";
 import { PageTitle } from "@/components/Header";
 import { Card } from "@/components/Widgets";
 import { notifyStorageChange, STORAGE_PREFIX } from "@/hooks/useLocalStorage";
@@ -34,6 +35,7 @@ function SettingsPage() {
   const [lat, setLat] = useState(""); const [lon, setLon] = useState("");
   const file = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState("");
+  const stopTest = useRef<(() => void) | null>(null);
 
   const search = async (e: React.FormEvent) => {
     e.preventDefault(); if (!q.trim()) return;
@@ -100,6 +102,17 @@ function SettingsPage() {
           <select className="field w-full" value={s.method} onChange={(e) => setS({ ...s, method: Number(e.target.value) })}>
             {METHODS.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
           </select>
+        </Card>
+        <Card title="Prayer Settings">
+          <label className="mb-4 flex items-center justify-between text-sm">Prayer time alarm (1 minute)
+            <input type="checkbox" className="h-4 w-4 accent-[var(--primary)]" checked={s.prayerAlarm !== false} onChange={(e) => setS({ ...s, prayerAlarm: e.target.checked })} />
+          </label>
+          <p className="mb-2 text-sm">Alarm volume: {Math.round((s.prayerVolume ?? 0.7) * 100)}%</p>
+          <input type="range" min={0} max={1} step={0.05} className="mb-4 w-full accent-[var(--primary)]" value={s.prayerVolume ?? 0.7} onChange={(e) => setS({ ...s, prayerVolume: Number(e.target.value) })} />
+          <div className="flex gap-2">
+            <button className="btn btn-primary" onClick={() => { stopTest.current?.(); stopTest.current = playFor(60000, s.prayerVolume ?? 0.7).stop; }}>Test 1-minute alarm</button>
+            <button className="btn btn-ghost" onClick={() => { stopTest.current?.(); stopTest.current = null; }}>Stop</button>
+          </div>
         </Card>
         <Card title="Dashboard widgets">
           <ul className="space-y-2">
