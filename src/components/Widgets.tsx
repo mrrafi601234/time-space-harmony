@@ -8,7 +8,7 @@ import { fetchWeather, weatherInfo } from "@/services/weatherService";
 
 export function Card({ title, icon, children, className = "" }: { title?: string; icon?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={`glass p-5 ${className}`}>
+    <section className={`glass min-w-0 p-5 ${className}`}>
       {title && (
         <h2 className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           {icon} {title}
@@ -81,7 +81,7 @@ export function ForecastWidget() {
   const q = useWeather();
   return (
     <Card title="7-Day Forecast">
-      {q.isPending ? <div className="flex gap-3">{Array.from({ length: 7 }, (_, i) => <Skel key={i} className="h-28 w-20 shrink-0" />)}</div>
+      {q.isPending ? <div className="flex gap-3 overflow-x-auto">{Array.from({ length: 7 }, (_, i) => <Skel key={i} className="h-28 w-20 shrink-0" />)}</div>
         : q.isError ? <Err msg="Couldn't load forecast." retry={() => q.refetch()} /> : (
           <div className="flex gap-3 overflow-x-auto pb-1">
             {q.data.daily.time.map((t, i) => {

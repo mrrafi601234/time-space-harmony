@@ -29,7 +29,7 @@ function Dashboard() {
         {w.clock && <ClockWidget />}
         {w.weather && <WeatherWidget />}
         {w.prayer && <div className="md:row-span-2"><PrayerWidget /></div>}
-        {w.forecast && <div className="md:col-span-2"><ForecastWidget /></div>}
+        {w.forecast && <div className="min-w-0 md:col-span-2"><ForecastWidget /></div>}
         {w.classes !== false && <ClassScheduleWidget />}
         {w.tasks && <div className="md:col-span-2"><TodayTasksWidget /></div>}
       </div>
