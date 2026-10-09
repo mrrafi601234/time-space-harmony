@@ -10,6 +10,7 @@ export interface Settings {
   prayerVolume?: number;
   prayerAlarm?: boolean;
   ambient?: boolean;
+  backgroundMode?: "images" | "particles";
   widgets: Record<WidgetKey, boolean>;
 }
 export const DEFAULT_SETTINGS: Settings = {
@@ -18,6 +19,7 @@ export const DEFAULT_SETTINGS: Settings = {
   lon: -71.0184,
   unit: "F",
   method: 2,
+  backgroundMode: "images",
   widgets: { clock: true, weather: true, forecast: true, prayer: true, tasks: true, classes: true },
 };
 export const useSettings = () => useLocalStorage<Settings>("settings", DEFAULT_SETTINGS);

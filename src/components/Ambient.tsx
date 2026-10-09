@@ -3,6 +3,7 @@ import confetti from "canvas-confetti";
 import { useEffect, useRef } from "react";
 import { useSettings, useTasks, ymd } from "@/lib/store";
 import { fetchWeather } from "@/services/weatherService";
+import { DynamicBackground } from "@/components/DynamicBackground";
 
 type Mode = "rain" | "night" | "day";
 const RAIN = new Set([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99]);
@@ -14,10 +15,11 @@ export function AmbientBackground() {
   const q = useQuery({ queryKey: ["weather", s.lat, s.lon, s.unit], queryFn: () => fetchWeather(s.lat, s.lon, s.unit), staleTime: 10 * 60000 });
   const code = q.data?.current.weather_code;
   const on = s.ambient !== false;
+  const particles = s.backgroundMode === "particles";
 
   useEffect(() => {
     const cv = ref.current;
-    if (!cv || !on) return;
+    if (!cv || !on || !particles || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = cv.getContext("2d");
     if (!ctx) return;
     const h = new Date().getHours();
@@ -52,9 +54,10 @@ export function AmbientBackground() {
     };
     draw();
     return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
-  }, [code, on]);
+  }, [code, on, particles]);
 
   if (!on) return null;
+  if (!particles) return <DynamicBackground weather={q.data} />;
   return <canvas ref={ref} aria-hidden className="pointer-events-none fixed inset-0 z-0" />;
 }
 
