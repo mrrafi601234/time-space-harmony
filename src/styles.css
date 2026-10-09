@@ -57,9 +57,9 @@
   --background: oklch(0.208 0.042 265.755);
   --background-deep: oklch(0.154 0.02 261);
   --foreground: oklch(0.96 0.01 250);
-  --card: oklch(0.21 0.035 262 / 78%);
+  --card: oklch(0.24 0.035 262 / 46%);
   --card-foreground: oklch(0.96 0.01 250);
-  --popover: oklch(0.22 0.03 260);
+  --popover: oklch(0.22 0.03 260 / 80%);
   --popover-foreground: oklch(0.96 0.01 250);
   --primary: oklch(0.78 0.13 210);
   --primary-foreground: oklch(0.16 0.025 262);
@@ -83,13 +83,13 @@
   --chart-3: oklch(0.62 0.17 275);
   --chart-4: oklch(0.82 0.14 80);
   --chart-5: oklch(0.66 0.2 22);
-  --sidebar: oklch(0.16 0.025 262 / 85%);
+  --sidebar: oklch(0.19 0.025 262 / 58%);
   --sidebar-foreground: oklch(0.96 0.01 250);
   --sidebar-primary: oklch(0.78 0.13 210);
   --sidebar-primary-foreground: oklch(0.16 0.025 262);
   --sidebar-accent: oklch(0.3 0.035 258);
   --sidebar-accent-foreground: oklch(0.96 0.01 250);
-  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-border: oklch(0.96 0.01 250 / 24%);
   --sidebar-ring: oklch(0.78 0.13 210);
   --gradient-accent: linear-gradient(135deg, var(--indigo), var(--primary) 55%, var(--success));
   --gradient-page:
@@ -100,7 +100,11 @@
   --shadow-glow: 0 0 40px -10px color-mix(in oklab, var(--primary) 55%, transparent);
   --shadow-glow-success: 0 0 24px -6px color-mix(in oklab, var(--success) 70%, transparent);
   --shadow-glow-violet: 0 0 40px -8px color-mix(in oklab, var(--violet) 60%, transparent);
-  --shadow-glass: 0 12px 32px -18px oklch(0 0 0 / 70%), inset 0 1px 0 color-mix(in oklab, var(--primary) 12%, transparent);
+  --glass-edge: oklch(0.96 0.01 250 / 28%);
+  --glass-highlight: oklch(0.98 0.01 250 / 17%);
+  --glass-sheen: linear-gradient(155deg, var(--glass-highlight), oklch(0.96 0.01 250 / 5%) 34%, transparent 35%, transparent 70%, oklch(0.78 0.13 210 / 6%));
+  --glass-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='.055'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpath fill='none' d='M0 0h180v180H0z'/%3E%3Cpath filter='url(%23grain)' opacity='.7' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+  --shadow-glass: 0 18px 42px -20px oklch(0 0 0 / 65%), inset 0 1px 1px var(--glass-highlight), inset 1px 0 0 oklch(0.96 0.01 250 / 9%), inset 0 -1px 1px oklch(0.96 0.01 250 / 8%);
   --background-overlay: linear-gradient(180deg, oklch(0.154 0.02 261 / 56%), oklch(0.154 0.02 261 / 83%));
 }
 
@@ -118,20 +122,22 @@
 
 @utility glass {
   background: var(--card);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
+  background-image: var(--glass-grain), var(--glass-sheen);
+  backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid var(--glass-edge);
   border-radius: 0.5rem;
   box-shadow: var(--shadow-glass);
   transition: box-shadow 300ms, border-color 300ms;
-  &:hover { border-color: color-mix(in oklab, var(--primary) 30%, transparent); box-shadow: 0 10px 30px -15px oklch(0 0 0 / 60%), var(--shadow-glow); }
+  &:hover { border-color: color-mix(in oklab, var(--glass-edge) 65%, var(--primary)); box-shadow: var(--shadow-glass), var(--shadow-glow); }
 }
 
 .weather-backdrop { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--background-deep); }
 .weather-photo { position: absolute; inset: -6px; width: calc(100% + 12px); height: calc(100% + 12px); object-fit: cover; filter: blur(3px) saturate(0.65); }
 .weather-photo-enter { animation: weather-fade 2s ease-in-out both; }
 .weather-overlay { position: absolute; inset: 0; background: var(--background-overlay); }
-.quick-tile { min-width: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--card); backdrop-filter: blur(16px); box-shadow: var(--shadow-glass); transition: border-color 200ms, box-shadow 200ms; }
-.quick-tile:hover { border-color: var(--primary); box-shadow: var(--shadow-glow); }
+.quick-tile { min-width: 0; border: 1px solid var(--glass-edge); border-radius: 8px; background-color: var(--card); background-image: var(--glass-grain), var(--glass-sheen); backdrop-filter: blur(22px) saturate(140%); box-shadow: var(--shadow-glass); transition: border-color 200ms, box-shadow 200ms; }
+.quick-tile:hover { border-color: var(--primary); box-shadow: var(--shadow-glass), var(--shadow-glow); }
+aside.bg-sidebar, nav.bg-sidebar, [role="dialog"], [role="alertdialog"] { background-image: var(--glass-grain), var(--glass-sheen); backdrop-filter: blur(22px) saturate(140%); border-color: var(--glass-edge); box-shadow: var(--shadow-glass); }
 @keyframes weather-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .weather-photo-enter { animation: none; } *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
 @utility shadow-glow-success { box-shadow: var(--shadow-glow-success); }
