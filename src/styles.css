@@ -102,6 +102,15 @@
   --shadow-glow-violet: 0 0 40px -8px color-mix(in oklab, var(--violet) 60%, transparent);
   --shadow-glass: 0 12px 32px -18px oklch(0 0 0 / 70%), inset 0 1px 0 color-mix(in oklab, var(--primary) 12%, transparent);
   --background-overlay: linear-gradient(180deg, oklch(0.154 0.02 261 / 56%), oklch(0.154 0.02 261 / 83%));
+  --glass-sheet: oklch(0.27 0.027 252 / 48%);
+  --glass-dense: oklch(0.2 0.025 253 / 78%);
+  --glass-highlight: oklch(1 0 0 / 8.2%);
+  --glass-specular: oklch(1 0 0 / 28%);
+  --glass-sheen: linear-gradient(125deg, oklch(1 0 0 / 13%), transparent 34%, transparent 65%, oklch(0.8 0.09 220 / 7%));
+  --glass-button: linear-gradient(160deg, oklch(0.39 0.024 250 / 85%), oklch(0.18 0.026 253 / 95%) 55%, oklch(0.23 0.04 243));
+  --glass-shadow: 0 28px 75px -24px oklch(0 0 0 / 70%), inset 0 1px 0 var(--glass-specular), inset 0 -1px 0 var(--glass-highlight);
+  --glass-button-shadow: inset 0 1px 1px var(--glass-specular), inset 0 -2px 4px oklch(0 0 0 / 50%), 0 10px 18px -10px oklch(0 0 0 / 90%), 0 8px 18px -10px var(--primary);
+  --glass-active-shadow: inset 0 1px 1px var(--glass-specular), 0 0 0 1px var(--primary), 0 10px 25px -6px var(--primary);
 }
 
 @layer base {
@@ -132,6 +141,23 @@
 .weather-overlay { position: absolute; inset: 0; background: var(--background-overlay); }
 .quick-tile { min-width: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--card); backdrop-filter: blur(16px); box-shadow: var(--shadow-glass); transition: border-color 200ms, box-shadow 200ms; }
 .quick-tile:hover { border-color: var(--primary); box-shadow: var(--shadow-glow); }
+.glass-sheet { position: relative; isolation: isolate; overflow: hidden; background: var(--glass-sheen), var(--glass-sheet); backdrop-filter: blur(28px) saturate(125%); border: 1px solid var(--glass-highlight); border-radius: 8px; box-shadow: var(--glass-shadow); }
+.glass-sheet::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: url("./assets/glass-grain.png") repeat; opacity: .46; mix-blend-mode: soft-light; }
+.glass-sheet::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; box-shadow: inset 0 1px 0 var(--glass-specular); }
+.glass-control { background: var(--glass-button); border: 1px solid var(--glass-highlight); color: var(--foreground); box-shadow: var(--glass-button-shadow); border-radius: 8px; transition: box-shadow 220ms, border-color 220ms, transform 220ms; }
+.glass-control:hover, .glass-control:focus-visible, .glass-control[aria-pressed="true"] { background: var(--glass-button); border-color: var(--primary); box-shadow: var(--glass-active-shadow); transform: translateY(-2px); }
+.dashboard-sheet .glass { background: transparent; border: 0; border-radius: 0; backdrop-filter: none; box-shadow: none; }
+.dashboard-sheet .glass:hover { box-shadow: none; }
+.dashboard-sheet .glass > h2 { color: var(--foreground); letter-spacing: 0; }
+.dashboard-sheet .btn, .dashboard-sheet button:not(.glass-control), .quick-hub button { background: var(--glass-button); border: 1px solid var(--glass-highlight); box-shadow: var(--glass-button-shadow); }
+.dashboard-sheet .btn:hover, .dashboard-sheet button:hover, .quick-hub button:hover { box-shadow: var(--glass-active-shadow); }
+.dashboard-sheet .text-gradient { background: none; color: var(--foreground); }
+.dashboard-sheet .bg-gradient-accent { background: var(--glass-button); color: var(--foreground); border: 1px solid var(--glass-highlight); box-shadow: var(--glass-button-shadow); }
+.dashboard-sheet .h-1\.5 .bg-gradient-accent, .dashboard-sheet .h-2 .bg-gradient-accent { background: var(--primary); box-shadow: var(--shadow-glow); }
+.quick-hub .quick-tile { background: var(--glass-button); border-color: var(--glass-highlight); box-shadow: var(--glass-button-shadow); }
+.quick-hub .quick-tile:hover { box-shadow: var(--glass-active-shadow); }
+.glass-top-link { color: var(--muted-foreground); transition: color 180ms; }
+.glass-top-link:hover, .glass-top-link[aria-current="page"] { color: var(--foreground); }
 @keyframes weather-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .weather-photo-enter { animation: none; } *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
 @utility shadow-glow-success { box-shadow: var(--shadow-glow-success); }
