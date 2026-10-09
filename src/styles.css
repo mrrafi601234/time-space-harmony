@@ -32,6 +32,7 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-indigo: var(--indigo);
+  --color-violet: var(--violet);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -53,10 +54,10 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.16 0.025 262);
-  --background-deep: oklch(0.13 0.022 262);
+  --background: oklch(0.21 0.04 265);
+  --background-deep: oklch(0.145 0.02 260);
   --foreground: oklch(0.96 0.01 250);
-  --card: oklch(0.28 0.035 258 / 55%);
+  --card: oklch(0.24 0.035 262 / 45%);
   --card-foreground: oklch(0.96 0.01 250);
   --popover: oklch(0.22 0.03 260);
   --popover-foreground: oklch(0.96 0.01 250);
@@ -73,7 +74,8 @@
   --success: oklch(0.76 0.15 160);
   --warning: oklch(0.82 0.14 80);
   --indigo: oklch(0.62 0.17 275);
-  --border: oklch(1 0 0 / 9%);
+  --violet: oklch(0.68 0.2 300);
+  --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.78 0.13 210);
   --chart-1: oklch(0.78 0.13 210);
@@ -81,7 +83,7 @@
   --chart-3: oklch(0.62 0.17 275);
   --chart-4: oklch(0.82 0.14 80);
   --chart-5: oklch(0.66 0.2 22);
-  --sidebar: oklch(0.14 0.024 262 / 80%);
+  --sidebar: oklch(0.16 0.025 262 / 45%);
   --sidebar-foreground: oklch(0.96 0.01 250);
   --sidebar-primary: oklch(0.78 0.13 210);
   --sidebar-primary-foreground: oklch(0.16 0.025 262);
@@ -96,6 +98,8 @@
     radial-gradient(50rem 40rem at 50% 110%, oklch(0.76 0.15 160 / 10%), transparent 60%),
     var(--background-deep);
   --shadow-glow: 0 0 40px -10px color-mix(in oklab, var(--primary) 55%, transparent);
+  --shadow-glow-success: 0 0 24px -6px color-mix(in oklab, var(--success) 70%, transparent);
+  --shadow-glow-violet: 0 0 40px -8px color-mix(in oklab, var(--violet) 60%, transparent);
 }
 
 @layer base {
@@ -115,8 +119,14 @@
   backdrop-filter: blur(16px);
   border: 1px solid var(--border);
   border-radius: 1rem;
-  box-shadow: 0 10px 30px -15px oklch(0 0 0 / 60%);
+  box-shadow: 0 10px 30px -15px oklch(0 0 0 / 60%), inset 0 1px 0 oklch(1 0 0 / 6%);
+  transition: box-shadow 300ms, border-color 300ms;
+  &:hover { border-color: color-mix(in oklab, var(--primary) 30%, transparent); box-shadow: 0 10px 30px -15px oklch(0 0 0 / 60%), var(--shadow-glow); }
 }
+@utility shadow-glow-success { box-shadow: var(--shadow-glow-success); }
+@utility shadow-glow-violet { box-shadow: var(--shadow-glow-violet); }
+@utility check-pop { animation: check-pop 300ms ease-out; }
+@keyframes check-pop { 0% { transform: scale(0.7); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
 @utility text-gradient {
   background: var(--gradient-accent);
   -webkit-background-clip: text;
