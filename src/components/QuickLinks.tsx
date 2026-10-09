@@ -1,5 +1,4 @@
-import { ArrowLeft, ArrowRight, ExternalLink, Globe, GripVertical, Pencil, Plus, Star, Trash2, Mail, Link2, Settings } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { ArrowLeft, ArrowRight, ExternalLink, Globe, GripVertical, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -31,18 +30,13 @@ export function QuickLinks() {
   const existing = draft && links.some((link) => link.id === draft.id);
 
   return (
-    <section className="quick-hub glass-sheet mx-auto my-8 max-w-3xl p-5 sm:p-6" aria-labelledby="quick-links-heading">
-      <div className="mb-6 flex justify-center gap-5 border-b border-border pb-6 sm:gap-8">
-        <Button variant="glass" asChild className="h-20 w-20 flex-col gap-2 text-[11px]"><a href="mailto:" aria-label="Open mail"><Mail className="!h-6 !w-6" strokeWidth={1.3} />Mail</a></Button>
-        <Button variant="glass" className="h-20 w-20 flex-col gap-2 text-[11px]" onClick={() => edit({ id: uid(), title: "", url: "", icon: "", category: "Study" })}><Link2 className="!h-6 !w-6" strokeWidth={1.3} />Links</Button>
-        <Button variant="glass" asChild className="h-20 w-20 flex-col gap-2 text-[11px]"><Link to="/settings"><Settings className="!h-6 !w-6" strokeWidth={1.3} />Settings</Link></Button>
-      </div>
+    <section className="quick-hub my-6" aria-labelledby="quick-links-heading">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 id="quick-links-heading" className="flex items-center gap-2 text-lg font-semibold"><Star className="h-4 w-4 text-primary" />Quick Links<span className="text-xs font-normal text-muted-foreground">{links.length}</span></h2>
         <Button size="sm" variant="outline" onClick={() => edit({ id: uid(), title: "", url: "", icon: "", category: "Study" })}><Plus />Add link</Button>
       </div>
       {links.length > 0 && <div className="mb-3 flex flex-wrap gap-1" aria-label="Link categories">{categories.map((category) => <Button size="sm" variant="ghost" key={category} aria-pressed={selected === category} onClick={() => setFilter(category)} className={selected === category ? "bg-primary/10 text-primary" : "text-muted-foreground"}>{category}</Button>)}</div>}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-6">
         {links.filter((link) => selected === "All" || link.category === selected).map((link) => {
           const index = links.findIndex((item) => item.id === link.id);
           return <article key={link.id} className={`quick-tile group ${dragged === link.id ? "opacity-50" : ""}`} onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }} onDrop={(event) => { event.preventDefault(); const id = event.dataTransfer.getData("text/plain"); setLinks((current) => reorderLinks(current, id, link.id)); setDragged(null); }}>

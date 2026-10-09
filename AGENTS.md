@@ -12,4 +12,3 @@
 - Keep favorite links in the shared LocalStorage namespace so existing backup, restore and reset actions include them.
 - Keep weather scene selection in a pure browser-safe helper and photo rendering separate from the canvas, so weather mappings are testable and background modes remain independent.
 - Bundle the weather photo set as local assets and preload each next image before crossfading, so background transitions never expose a missing image.
-- Keep the premium dashboard sheet and glossy controls in shared CSS tokens and the Button glass variant; render widget sections unframed within the sheet to avoid nested glass cards.
