@@ -3,8 +3,10 @@ import type { SoundKey } from "./store";
 let ctx: AudioContext | null = null;
 const ac = () => (ctx ??= new AudioContext());
 
+let gainMul = 1;
 function tone(freq: number, start: number, dur: number, type: OscillatorType = "sine", vol = 0.3) {
   const c = ac();
+  vol = Math.max(0.0011, vol * gainMul);
   const o = c.createOscillator();
   const g = c.createGain();
   o.type = type;
@@ -29,4 +31,19 @@ export function loopSound(s: SoundKey) {
   playSound(s);
   const id = setInterval(() => playSound(s), 1500);
   return () => clearInterval(id);
+}
+
+/** Plays the chime for `ms` (default 60s) at volume 0-1. Returns stop fn and whether audio is allowed. */
+export function playFor(ms = 60000, volume = 0.7): { stop: () => void; blocked: boolean } {
+  let blocked = false;
+  try {
+    const c = ac();
+    if (c.state === "suspended") void c.resume();
+    blocked = c.state !== "running";
+  } catch { return { stop: () => {}, blocked: true }; }
+  const play = () => { gainMul = volume * 2; try { playSound("chime"); } finally { gainMul = 1; } };
+  play();
+  const id = setInterval(play, 1800);
+  const t = setTimeout(() => clearInterval(id), ms);
+  return { stop: () => { clearInterval(id); clearTimeout(t); }, blocked };
 }

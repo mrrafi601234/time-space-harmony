@@ -7,6 +7,8 @@ export interface Settings {
   lon: number;
   unit: "C" | "F";
   method: number;
+  prayerVolume?: number;
+  prayerAlarm?: boolean;
   widgets: Record<WidgetKey, boolean>;
 }
 export const DEFAULT_SETTINGS: Settings = {
