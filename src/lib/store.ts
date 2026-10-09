@@ -1,6 +1,6 @@
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
-export type WidgetKey = "clock" | "weather" | "forecast" | "prayer" | "tasks";
+export type WidgetKey = "clock" | "weather" | "forecast" | "prayer" | "tasks" | "classes";
 export interface Settings {
   city: string;
   lat: number;
@@ -9,6 +9,7 @@ export interface Settings {
   method: number;
   prayerVolume?: number;
   prayerAlarm?: boolean;
+  ambient?: boolean;
   widgets: Record<WidgetKey, boolean>;
 }
 export const DEFAULT_SETTINGS: Settings = {
@@ -17,7 +18,7 @@ export const DEFAULT_SETTINGS: Settings = {
   lon: -71.0184,
   unit: "F",
   method: 2,
-  widgets: { clock: true, weather: true, forecast: true, prayer: true, tasks: true },
+  widgets: { clock: true, weather: true, forecast: true, prayer: true, tasks: true, classes: true },
 };
 export const useSettings = () => useLocalStorage<Settings>("settings", DEFAULT_SETTINGS);
 
@@ -54,3 +55,21 @@ export const daysUntil = (date: string) => {
   const n = new Date(); n.setHours(0, 0, 0, 0);
   return Math.round((t - n.getTime()) / 86400000);
 };
+
+export interface ClassItem { id: string; subject: string; instructor: string; room: string; days: number[]; start: string; end: string }
+const NO_CLASSES: ClassItem[] = [];
+export const useClasses = () => useLocalStorage<ClassItem[]>("classes", NO_CLASSES);
+
+const NO_POMO: Record<string, number> = {};
+/** Completed Pomodoro work sessions per day (YYYY-MM-DD → count). */
+export const usePomoLog = () => useLocalStorage<Record<string, number>>("pomoLog", NO_POMO);
+
+/** Consecutive days with activity, ending today (or yesterday if today has none yet). */
+export function streak(days: Iterable<string>, today = new Date()) {
+  const set = new Set(days);
+  const d = new Date(today);
+  if (!set.has(ymd(d))) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (set.has(ymd(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}

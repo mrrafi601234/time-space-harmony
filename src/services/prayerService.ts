@@ -38,17 +38,20 @@ export function to12h(hhmm: string) {
 }
 
 export interface PrayerWindow { name: PrayerName; start: Date; end: Date; endLabel: string; pct: number; remaining: number }
+export interface PrayerGap { kind: "duha" | "qiyam"; label: string; next: PrayerName; nextAt: Date; remaining: number }
 
-/** Active prayer window: Fajr→Sunrise, Dhuhr→Asr, Asr→Maghrib, Maghrib→Isha, Isha→next Fajr. Null between Sunrise and Dhuhr. */
+const mid = (a: Date, b: Date) => new Date((a.getTime() + b.getTime()) / 2);
+
+/** Fajr→Sunrise, Dhuhr→Asr, Asr→Maghrib (sunset), Maghrib→Isha, Isha→Islamic midnight (halfway Maghrib→next Fajr). */
 export function getPrayerWindow(t: PrayerTimes, now: Date): PrayerWindow | null {
   const at = (k: keyof PrayerTimes, add = 0) => { const d = toDate(t[k], now); d.setDate(d.getDate() + add); return d; };
   const wins: [PrayerName, Date, Date, string][] = [
-    ["Isha", at("Isha", -1), at("Fajr"), "Fajr"],
+    ["Isha", at("Isha", -1), mid(at("Maghrib", -1), at("Fajr")), "Islamic Midnight"],
     ["Fajr", at("Fajr"), at("Sunrise"), "Sunrise"],
     ["Dhuhr", at("Dhuhr"), at("Asr"), "Asr"],
-    ["Asr", at("Asr"), at("Maghrib"), "Maghrib"],
+    ["Asr", at("Asr"), at("Maghrib"), "Sunset"],
     ["Maghrib", at("Maghrib"), at("Isha"), "Isha"],
-    ["Isha", at("Isha"), at("Fajr", 1), "Fajr"],
+    ["Isha", at("Isha"), mid(at("Maghrib"), at("Fajr", 1)), "Islamic Midnight"],
   ];
   const w = wins.find(([, s, e]) => now >= s && now < e);
   if (!w) return null;
@@ -56,4 +59,14 @@ export function getPrayerWindow(t: PrayerTimes, now: Date): PrayerWindow | null 
   const total = end.getTime() - start.getTime();
   const el = now.getTime() - start.getTime();
   return { name, start, end, endLabel, pct: Math.min(100, Math.max(0, (el / total) * 100)), remaining: Math.max(0, Math.floor((end.getTime() - now.getTime()) / 1000)) };
+}
+
+/** Periods outside any prayer window: Sunrise→Dhuhr (Duha) and Islamic midnight→Fajr (Qiyam). */
+export function getPrayerGap(t: PrayerTimes, now: Date): PrayerGap | null {
+  if (getPrayerWindow(t, now)) return null;
+  const sunrise = toDate(t.Sunrise, now), dhuhr = toDate(t.Dhuhr, now);
+  const secs = (d: Date) => Math.max(0, Math.floor((d.getTime() - now.getTime()) / 1000));
+  if (now >= sunrise && now < dhuhr) return { kind: "duha", label: "Sunrise / Duha Period", next: "Dhuhr", nextAt: dhuhr, remaining: secs(dhuhr) };
+  const fajr = toDate(t.Fajr, now); if (fajr <= now) fajr.setDate(fajr.getDate() + 1);
+  return { kind: "qiyam", label: "Late Night / Qiyam Window", next: "Fajr", nextAt: fajr, remaining: secs(fajr) };
 }
