@@ -27,7 +27,7 @@ export function ClockWidget() {
   const now = useClock();
   const sec = now?.getSeconds() ?? 0;
   return (
-    <Card className="flex flex-col justify-between">
+    <Card className="clock-widget flex flex-col justify-between">
       <p className="text-sm text-muted-foreground">{now?.toLocaleDateString(undefined, { weekday: "long" }) ?? " "}</p>
       <p className="my-3 font-mono text-5xl font-bold tabular-nums text-gradient sm:text-6xl">
         {now ? now.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: true }).replace(/\s?[AP]M/i, "") : "--:--"}
@@ -52,7 +52,7 @@ export function WeatherWidget() {
   const [s, setS] = useSettings();
   const q = useWeather();
   return (
-    <Card title="Weather">
+    <Card title="Weather" className="weather-widget">
       {!now || q.isPending ? (
         <div className="space-y-3"><Skel className="h-14 w-32" /><Skel className="h-4 w-48" /></div>
       ) : q.isError ? <Err msg="Couldn't load weather." retry={() => q.refetch()} /> : (() => {
@@ -82,7 +82,7 @@ export function ForecastWidget() {
   const now = useClock();
   const q = useWeather();
   return (
-    <Card title="7-Day Forecast">
+    <Card title="7-Day Forecast" className="forecast-widget">
       {!now || q.isPending ? <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">{Array.from({ length: 7 }, (_, i) => <Skel key={i} className="h-28 min-w-0" />)}</div>
         : q.isError ? <Err msg="Couldn't load forecast." retry={() => q.refetch()} /> : (
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
@@ -123,7 +123,7 @@ export function PrayerWidget() {
   const gap = q.data && now ? getPrayerGap(q.data, now) : null;
   const rem = win ? `${Math.floor(win.remaining / 3600)}h ${Math.floor((win.remaining % 3600) / 60)}m` : "";
   return (
-    <Card title="Prayer Times" icon={<Moon className="h-3.5 w-3.5" />}>
+    <Card title="Prayer Times" icon={<Moon className="h-3.5 w-3.5" />} className="prayer-widget">
       {q.isPending ? <div className="space-y-2">{PRAYERS.map((p) => <Skel key={p} className="h-9" />)}</div>
         : q.isError ? <Err msg="Couldn't load prayer times." retry={() => q.refetch()} /> : (
           <>
