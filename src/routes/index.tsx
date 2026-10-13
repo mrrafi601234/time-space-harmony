@@ -4,14 +4,15 @@ import { ClockWidget, ForecastWidget, PrayerWidget, TodayTasksWidget, WeatherWid
 import { ClassScheduleWidget } from "@/components/Classes";
 import { useSettings } from "@/lib/store";
 import { QuickLinks } from "@/components/QuickLinks";
+import { StopwatchWidget, TimerWidget } from "@/components/TimeTools";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Dashboard — Muhi's Room" },
-      { name: "description", content: "Clock, weather, forecast, prayer times and today's tasks at a glance." },
+      { name: "description", content: "A distance-readable room dashboard with clock, weather, prayer times, stopwatch, countdown timer and today's tasks." },
       { property: "og:title", content: "Dashboard — Muhi's Room" },
-      { property: "og:description", content: "Clock, weather, forecast, prayer times and today's tasks at a glance." },
+      { property: "og:description", content: "A distance-readable room dashboard with clock, weather, prayer times, stopwatch, countdown timer and today's tasks." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -22,17 +23,19 @@ export const Route = createFileRoute("/")({
 function Dashboard() {
   const [{ widgets: w }] = useSettings();
   return (
-    <>
+    <div className="distance-dashboard">
       <PageTitle title="Welcome back, Muhi" sub="Here's your room at a glance." />
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <div className="dashboard-widgets grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
         {w.clock && <ClockWidget />}
         {w.weather && <WeatherWidget />}
         {w.prayer && <div className="md:row-span-2"><PrayerWidget /></div>}
         {w.forecast && <div className="min-w-0 md:col-span-2"><ForecastWidget /></div>}
         {w.classes !== false && <ClassScheduleWidget />}
         {w.tasks && <div className="md:col-span-2"><TodayTasksWidget /></div>}
+        <StopwatchWidget />
+        <TimerWidget />
       </div>
       <QuickLinks />
-    </>
+    </div>
   );
 }

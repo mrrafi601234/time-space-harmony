@@ -106,6 +106,8 @@
   --glass-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='.055'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpath fill='none' d='M0 0h180v180H0z'/%3E%3Cpath filter='url(%23grain)' opacity='.7' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
   --shadow-glass: 0 18px 42px -20px oklch(0 0 0 / 65%), inset 0 1px 1px var(--glass-highlight), inset 1px 0 0 oklch(0.96 0.01 250 / 9%), inset 0 -1px 1px oklch(0.96 0.01 250 / 8%);
   --background-overlay: linear-gradient(180deg, oklch(0.154 0.02 261 / 56%), oklch(0.154 0.02 261 / 83%));
+  --distance-muted: oklch(0.86 0.015 250);
+  --distance-surface: oklch(0.20 0.03 262 / 78%);
 }
 
 @layer base {
@@ -133,6 +135,28 @@
 }
 
 .weather-backdrop { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--background-deep); }
+.distance-dashboard .dashboard-widgets .glass { background-color: var(--distance-surface); }
+.distance-dashboard .dashboard-widgets .text-muted-foreground { color: var(--distance-muted); }
+.distance-dashboard .dashboard-widgets h2 { font-size: 1rem; line-height: 1.5; letter-spacing: 0; color: var(--foreground); }
+.distance-dashboard .dashboard-widgets .text-xs { font-size: 0.9375rem; line-height: 1.5; }
+.distance-dashboard .dashboard-widgets .text-sm { font-size: 1.0625rem; line-height: 1.5; }
+.distance-dashboard .clock-widget > p:nth-child(2) { display: flex; flex-wrap: wrap; align-items: baseline; font-size: 3.5rem; line-height: 1.2; color: var(--foreground); background: none; }
+.distance-dashboard .clock-widget > p:nth-child(2) span { font-size: 1.5rem; }
+.time-reading { font-size: 2.25rem; line-height: 1.3; white-space: nowrap; }
+@media (min-width: 768px) {
+  .distance-dashboard .dashboard-widgets .glass { padding: 1.5rem; }
+  .distance-dashboard .dashboard-widgets .text-xs { font-size: 1rem; }
+  .distance-dashboard .dashboard-widgets .text-sm { font-size: 1.25rem; }
+  .distance-dashboard .clock-widget > p:nth-child(2) { font-size: 4.5rem; }
+  .distance-dashboard .weather-widget .text-5xl { font-size: 4.5rem; }
+  .distance-dashboard .prayer-widget .text-3xl { font-size: 2.75rem; }
+  .distance-dashboard .forecast-widget .text-sm { font-size: 1.5rem; }
+  .time-reading { font-size: 2.75rem; }
+}
+@media (min-width: 1280px) {
+  .distance-dashboard .clock-widget > p:nth-child(2) { font-size: 5rem; }
+  .time-reading { font-size: 3rem; }
+}
 .weather-photo { position: absolute; inset: -6px; width: calc(100% + 12px); height: calc(100% + 12px); object-fit: cover; filter: blur(3px) saturate(0.65); }
 .weather-photo-enter { animation: weather-fade 2s ease-in-out both; }
 .weather-overlay { position: absolute; inset: 0; background: var(--background-overlay); }
